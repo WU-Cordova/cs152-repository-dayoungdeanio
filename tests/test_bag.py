@@ -1,6 +1,6 @@
 import pytest
 
-from bag import Bag 
+from datastructures.bag import Bag 
 
 
 

@@ -1,5 +1,5 @@
 from typing import Iterable, Optional, Dict
-from ibag import IBag, T  
+from datastructures.ibag import IBag, T  
 
 
 class Bag(IBag[T]):
