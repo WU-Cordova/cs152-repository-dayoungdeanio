@@ -6,24 +6,24 @@ from bag import Bag
 
 @pytest.fixture
 def bag():
-    """Fixture to provide a fresh Bag instance for each test."""
+    """ provide a fresh Bag for each test."""
     return Bag()
 
 
 def test_add_item_increases_count(bag: Bag[int]):
-    """Test adding an item increases the count of items in the bag."""
+    """ adding an item increases the count in the bag."""
     bag.add(1)
     assert bag.count(1) == 1
 
 
 def test_add_none_raises_type_error(bag: Bag[int]):
-    """Test adding None raises a TypeError."""
+    """ adding None raises a TypeError."""
     with pytest.raises(TypeError):
         bag.add(None)
 
 
 def test_remove_item_decreases_count(bag: Bag[int]):
-    """Test removing an item decreases its count in the bag."""
+    """ removing an item decreases count in bag."""
     bag.add(2)
     bag.add(2)
     bag.remove(2)
@@ -31,13 +31,13 @@ def test_remove_item_decreases_count(bag: Bag[int]):
 
 
 def test_remove_nonexistent_item_raises_value_error(bag: Bag[int]):
-    """Test removing an item not in the bag raises a ValueError."""
+    """ removing an item not in the bag raises a ValueError."""
     with pytest.raises(ValueError):
         bag.remove(3)
 
 
 def test_count_returns_correct_number_of_occurrences(bag: Bag[int]):
-    """Test count method returns the correct number of occurrences for an item."""
+    """count method returns the right number of occurrences for an item."""
     bag.add(4)
     bag.add(4)
     bag.add(5)
@@ -47,7 +47,7 @@ def test_count_returns_correct_number_of_occurrences(bag: Bag[int]):
 
 
 def test_len_returns_total_number_of_items(bag: Bag[int]):
-    """Test len method returns the total number of items, including duplicates."""
+    """ returns the total number of items, including duplicates."""
     bag.add(6)
     bag.add(7)
     bag.add(6)
@@ -55,7 +55,7 @@ def test_len_returns_total_number_of_items(bag: Bag[int]):
 
 
 def test_distinct_items_returns_unique_items(bag: Bag[int]):
-    """Test distinct_items method returns only unique items."""
+    """ distinct_items method returns only unique items."""
     bag.add(8)
     bag.add(8)
     bag.add(9)
@@ -63,14 +63,14 @@ def test_distinct_items_returns_unique_items(bag: Bag[int]):
 
 
 def test_contains_checks_item_membership(bag: Bag[int]):    
-    """Test contains method correctly checks if an item is in the bag."""
+    """ contains method correctly checks if an item is in the bag."""
     bag.add(10)
     assert 10 in bag
     assert 11 not in bag
 
 
 def test_clear_removes_all_items(bag: Bag[int]):
-    """Test clear method removes all items from the bag."""
+    """ clear method empties bag."""
     bag.add(12)
     bag.add(13)
     bag.clear()

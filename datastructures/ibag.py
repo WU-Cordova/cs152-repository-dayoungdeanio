@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar, Generic, Iterable
 
-T = TypeVar('T')  # Generic type for items in the Bag
+T = TypeVar('T') 
 
 class IBag(ABC, Generic[T]):
     """
