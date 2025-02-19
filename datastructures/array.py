@@ -13,12 +13,12 @@ class Array(IArray[T]):
 
         self._data_type = data_type
         self._logical_size = len(starting_sequence)
-        self._physical_size = max(2, self._logical_size * 2)  # Ensure a minimum physical size
+        self._physical_size = max(2, self._logical_size * 2)  
         self._array: NDArray = np.empty(self._physical_size, dtype=self._data_type)
 
         for i, item in enumerate(starting_sequence):
             if not isinstance(item, self._data_type):
-                raise TypeError(f"Expected type {self._data_type}, but got {type(item)}")  # ✅ Type check
+                raise TypeError(f"Expected type {self._data_type}, but got {type(item)}")  
             self._array[i] = item
 
     def __len__(self) -> int:
@@ -35,7 +35,6 @@ class Array(IArray[T]):
             return self._array[index].item() if isinstance(self._array[index], np.generic) else self._array[index]
 
         if isinstance(index, slice):
-            # ✅ Convert numpy.int64 values to Python int before passing to Array
             return Array(
                 starting_sequence=[x.item() if isinstance(x, np.generic) else x for x in self._array[index][:self._logical_size]],
                 data_type=self._data_type
@@ -46,7 +45,7 @@ class Array(IArray[T]):
     def __setitem__(self, index: int, item: T) -> None:
         """Modify an item at a specific index."""
         if not isinstance(item, self._data_type):
-            raise TypeError(f"Expected type {self._data_type}, but got {type(item)}")  # ✅ Type check
+            raise TypeError(f"Expected type {self._data_type}, but got {type(item)}")  
         if index < 0:
             index += self._logical_size
         if index < 0 or index >= self._logical_size:
