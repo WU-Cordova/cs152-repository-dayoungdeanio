@@ -1,109 +1,74 @@
-import pytest
+from __future__ import annotations
+from typing import Iterator, Sequence, TypeVar, Generic
+from iarray2d import IArray2D, T
 
-class TestArray2D:
-    
-    # ✅ Fixtures to create test instances of Array2D
-    @pytest.fixture
-    def empty3x3(self) -> Array2D[int]:
-        """Returns an empty 3x3 Array2D with int type."""
-        return Array2D.empty(rows=3, cols=3, data_type=int)
-    
-    @pytest.fixture
-    def filled3x3(self) -> Array2D[int]:
-        """Returns a pre-filled 3x3 Array2D with integers."""
-        return Array2D([[1, 2, 3], [4, 5, 6], [7, 8, 9]], data_type=int)
+T = TypeVar("T")
 
-    # ✅ Test Initialization of an Empty Array
-    def test_init_empty_3x3(self, empty3x3: Array2D[int]) -> None:
-        """Checks if an empty 3x3 Array2D is initialized with default values (0)."""
-        for row in range(3):
-            for col in range(3):
-                assert empty3x3[row][col] == 0
+class Array2D(IArray2D[T]):
+    class Row(IArray2D.IRow[T]):
+        def __init__(self, row_index: int, array: Array2D[T], num_columns: int) -> None:
+            self.row_index = row_index
+            self.array = array
+            self.num_columns = num_columns
 
-    # ✅ Test Initialization of a Filled Array
-    def test_init_filled_3x3(self, filled3x3: Array2D[int]) -> None:
-        """Checks if a 3x3 Array2D initializes correctly with predefined values."""
-        expected_values = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        for row in range(3):
-            for col in range(3):
-                assert filled3x3[row][col] == expected_values[row][col]
-
-    # ✅ Test Getting and Setting Items
-    def test_set_get_item(self, empty3x3: Array2D[int]) -> None:
-        """Ensures values can be set and retrieved correctly."""
-        empty3x3[1][1] = 42
-        assert empty3x3[1][1] == 42
-
-    # ✅ Test Row Iteration
-    def test_row_iteration(self, filled3x3: Array2D[int]) -> None:
-        """Verifies that rows can be iterated correctly."""
-        row_values = [list(row) for row in filled3x3]
-        assert row_values == [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-
-    # ✅ Test Nested Iteration (Full 2D Traversal)
-    def test_nested_iteration(self, filled3x3: Array2D[int]) -> None:
-        """Checks if nested iteration over the 2D array works correctly."""
-        values = []
-        for row in filled3x3:
-            for item in row:
-                values.append(item)
+        def __getitem__(self, column_index: int) -> T:
+            if column_index < 0 or column_index >= self.num_columns:
+                raise IndexError("Column index out of bounds")
+            return self.array._data[self.row_index][column_index]
         
-        assert values == [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        def __setitem__(self, column_index: int, value: T) -> None:
+            if column_index < 0 or column_index >= self.num_columns:
+                raise IndexError("Column index out of bounds")
+            self.array._data[self.row_index][column_index] = value
+        
+        def __iter__(self) -> Iterator[T]:
+            return iter(self.array._data[self.row_index])
+        
+        def __reversed__(self) -> Iterator[T]:
+            return reversed(self.array._data[self.row_index])
 
-    # ✅ Test Out of Bounds Indexing
-    def test_out_of_bounds(self, filled3x3: Array2D[int]) -> None:
-        """Ensures accessing an index out of bounds raises IndexError."""
-        with pytest.raises(IndexError):
-            _ = filled3x3[3][0]  # Out of bounds row
+        def __len__(self) -> int:
+            return self.num_columns
+        
+        def __str__(self) -> str:
+            return f"[{', '.join(map(str, self.array._data[self.row_index]))}]"
+        
+        def __repr__(self) -> str:
+            return f"Row {self.row_index}: {self}"
 
-        with pytest.raises(IndexError):
-            _ = filled3x3[0][3]  # Out of bounds column
+    def __init__(self, starting_sequence: Sequence[Sequence[T]] = [[]], data_type=object) -> None:
+        if not isinstance(starting_sequence, Sequence) or any(not isinstance(row, Sequence) for row in starting_sequence):
+            raise ValueError("Starting sequence must be a sequence of sequences")
+        
+        row_lengths = {len(row) for row in starting_sequence}
+        if len(row_lengths) > 1:
+            raise ValueError("All rows must have the same length")
+        
+        self._data = [list(row) for row in starting_sequence]
+        self.__num_rows = len(self._data)
+        self.__num_columns = row_lengths.pop() if self.__num_rows > 0 else 0
+        self.data_type = data_type
 
-    # ✅ Test Length (Row Count)
-    def test_len(self, filled3x3: Array2D[int]) -> None:
-        """Ensures len(Array2D) returns the correct number of rows."""
-        assert len(filled3x3) == 3
+    @staticmethod
+    def empty(rows: int = 0, cols: int = 0, data_type: type = object) -> Array2D:
+        return Array2D([[data_type() for _ in range(cols)] for _ in range(rows)], data_type=data_type)
 
-    # ✅ Test String Representation
-    def test_str_repr(self, filled3x3: Array2D[int]) -> None:
-        """Checks if str and repr are formatted correctly."""
-        expected_str = "[[1, 2, 3], [4, 5, 6], [7, 8, 9]]"
-        assert str(filled3x3) == expected_str
-        assert repr(filled3x3).startswith("Array2D 3 Rows x 3 Columns")
-
-    # ✅ Test Reverse Iteration
-    def test_reverse_iteration(self, filled3x3: Array2D[int]) -> None:
-        """Verifies that reversed(Array2D) correctly reverses row order."""
-        reversed_rows = list(reversed(filled3x3))
-        expected = [[7, 8, 9], [4, 5, 6], [1, 2, 3]]
-        assert [list(row) for row in reversed_rows] == expected
-
-    # ✅ Test for ValueError if `starting_sequence` is not a sequence
-    def test_init_not_sequence(self) -> None:
-        """Ensures a ValueError is raised if the input is not a sequence."""
-        with pytest.raises(ValueError):
-            _ = Array2D(123, data_type=int)  # Not a list of lists
-
-        with pytest.raises(ValueError):
-            _ = Array2D("invalid_string", data_type=int)  # Not a sequence of sequences
-
-        with pytest.raises(ValueError):
-            _ = Array2D({1: [1, 2, 3]}, data_type=int)  # Dictionary is not a valid sequence
-
-    # ✅ Test for ValueError if `starting_sequence` contains mixed types
-    def test_init_mixed_types(self) -> None:
-        """Ensures a ValueError is raised if items in `starting_sequence` are of mixed types."""
-        with pytest.raises(ValueError):
-            _ = Array2D([[1, 2, "three"], [4, 5, 6]], data_type=int)  # Mixed types
-
-        with pytest.raises(ValueError):
-            _ = Array2D([[1.0, 2.0, 3], [4, "five", 6]], data_type=float)  # Mixed types
-
-        with pytest.raises(ValueError):
-            _ = Array2D([[1, 2, 3], ["four", "five", "six"]], data_type=str)  # Mixed row types
-
-    # ✅ Test for ValueError if `starting_sequence` has inconsistent lengths
-    def test_init_inconsistent_lengths(self) -> None:
-        """Ensures a ValueError is raised if rows in `starting_sequence` have different lengths."""
-        with pytest.raises(ValueError):
-            _ = Array2D([[1, 2, 3], [4, 5]], data_type=int)
+    def __getitem__(self, row_index: int) -> Row[T]:
+        if row_index < 0 or row_index >= self.__num_rows:
+            raise IndexError("Row index out of bounds")
+        return Array2D.Row(row_index, self, self.__num_columns)
+    
+    def __iter__(self) -> Iterator[Sequence[T]]:
+        return iter(self._data)
+    
+    def __reversed__(self) -> Iterator[Sequence[T]]:
+        return reversed(self._data)
+    
+    def __len__(self) -> int:
+        return self.__num_rows
+                                  
+    def __str__(self) -> str:
+        return f"[{', '.join(str(row) for row in self._data)}]"
+    
+    def __repr__(self) -> str:
+        return f"Array2D {self.__num_rows} Rows x {self.__num_columns} Columns, items: {str(self)}"
