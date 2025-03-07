@@ -1,4 +1,3 @@
-
 import os
 import time
 import random
@@ -90,14 +89,4 @@ def game_loop():
                 elif key == 'm':
                     manual_mode = True
 
-
-
-def main():
-
-    game_loop()
-    print("Hello, World!")
-
-
-
-if __name__ == '__main__':
-    main()
+game_loop()
