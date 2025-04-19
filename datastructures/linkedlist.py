@@ -208,3 +208,16 @@ class LinkedList(ILinkedList[T]):
 
     def __repr__(self) -> str:
         return f"LinkedList({' <-> '.join(str(item) for item in self)}) Count: {self.count}"
+
+    # === Aliases for compatibility with ListStack and Deque ===
+    def remove_first(self) -> T:
+        return self.pop_front()
+
+    def remove_last(self) -> T:
+        return self.pop()
+
+    def first(self) -> T:
+        return self.front
+
+    def last(self) -> T:
+        return self.back
