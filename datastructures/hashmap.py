@@ -35,8 +35,8 @@ class HashMap(IHashMap[KT, VT]):
 
         for i, (k, v) in enumerate(bucket):
             if k == key:
-                bucket.remove((k, v))              # 🛠 remove the (key, old_value)
-                bucket.append((key, value))         # 🛠 insert (key, new_value)
+                bucket.remove((k, v))
+                bucket.append((key, value))
                 return
 
         bucket.append((key, value))
@@ -50,7 +50,7 @@ class HashMap(IHashMap[KT, VT]):
         bucket = self._buckets[index]
         for i, (k, v) in enumerate(bucket):
             if k == key:
-                bucket.remove((k, v))  # 🛠 remove the (key, value) tuple
+                bucket.remove((k, v))
                 self._size -= 1
                 return
         raise KeyError(f"Key {key} not found.")
@@ -95,8 +95,7 @@ class HashMap(IHashMap[KT, VT]):
         return True
 
     def __str__(self) -> str:
-        items = ", ".join(f"{repr(k)}: {repr(v)}" for k, v in self.items())
-        return "{" + items + "}"
+        return "{" + ", ".join(f"{repr(k)}: {repr(v)}" for k, v in self.items()) + "}"
 
     def __repr__(self) -> str:
         return f"HashMap({str(self)})"
