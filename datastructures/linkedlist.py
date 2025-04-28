@@ -221,3 +221,8 @@ class LinkedList(ILinkedList[T]):
 
     def last(self) -> T:
         return self.back
+
+
+
+
+
