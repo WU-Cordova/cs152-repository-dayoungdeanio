@@ -1,6 +1,6 @@
 import copy
 from typing import Callable, Iterator, Optional, Tuple
-from .ihashmap import KT, VT, IHashMap
+from datastructures.ihashmap import KT, VT, IHashMap
 from datastructures.array import Array
 from datastructures.linkedlist import LinkedList
 import pickle
