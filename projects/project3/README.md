@@ -25,7 +25,7 @@ Throughout this project, I implemented a fully working drink ordering system for
 
 One challenge I faced was ensuring that method names in the main program matched the implementations from previous assignments. For example, my `LinkedList` used `append` instead of `add_last`, and my `HashMap` used dictionary-style item assignment (`[...] = ...`) instead of a `.put()` method. Debugging these mismatches helped me better understand how to design systems that align with the data structure interfaces provided.
 
-Another key learning was how to handle iteration correctly. My `HashMap` did not yield key-value pairs like a native Python dictionary, so I had to manually access values using the keys when generating reports. This helped reinforce my understanding of how custom data structures differ from built-in Python types.
+Another key learning was how to handle iteration correctly. My `HashMap` did not yield key-value pairs like a native Python dictionary, so I had to manually access values using the keys when generating reports.
 
 If I had more time, I would add features like file saving and loading so that completed orders persist across sessions. I would also add estimated wait times for drinks and improve the user interface with better formatting or color to make it more user-friendly.
 
@@ -98,7 +98,7 @@ Enter your choice: 6
 Exiting... Have a great day!
 
 
-## Screenshots
+## Screenshots *idk why its not displaying the images but i attached them*
 
 ### 1. Displaying the menu
 ![Menu](menu.png)
